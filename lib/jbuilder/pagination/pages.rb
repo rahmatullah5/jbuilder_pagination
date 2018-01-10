@@ -6,7 +6,7 @@ class Jbuilder
 
     pages_from(collection).map do |key, value|
       params = query_parameters(options).merge(page: { number: value, size: collection.size }).to_query
-      _set_value key, "#{options.fetch(:url, nil)}?#{params}"
+      value.nil? ? (_set_value key, nil) : (_set_value key, "#{options.fetch(:url, nil)}?#{params}")
     end
   end
 
@@ -14,19 +14,22 @@ class Jbuilder
 
   def pages_from(collection)
     {}.tap do |pages|
-      # pages[:self] = collection.current_page
-      # return pages if collection.total_pages == ONE_PAGE
+      pages[:self] = collection.current_page
+      return pages if collection.total_pages == ONE_PAGE
 
-      # unless collection.current_page == ONE_PAGE
-      #   pages[:first] = ONE_PAGE
-      #   pages[:prev]  = collection.current_page - ONE_PAGE
-      # end
+      unless collection.current_page == ONE_PAGE
+        pages[:first] = ONE_PAGE
+        pages[:prev]  = collection.current_page - ONE_PAGE
+        pages[:next] = nil
+        pages[:last] = nil
+      end
 
-      # unless collection.current_page == collection.total_pages
-      #   pages[:next] = collection.current_page + ONE_PAGE
-      #   pages[:last] = collection.total_pages
-
-      # end
+      unless collection.current_page == collection.total_pages
+        pages[:next] = collection.current_page + ONE_PAGE
+        pages[:last] = collection.total_pages
+        pages[:prev] = nil
+        pages[:first] = nil
+      end
     end
   end
 
