@@ -20,11 +20,14 @@ class Jbuilder
       unless collection.current_page == ONE_PAGE
         pages[:first] = ONE_PAGE
         pages[:prev]  = collection.current_page - ONE_PAGE
+        pages[:last]  = nil
       end
 
       unless collection.current_page == collection.total_pages
         pages[:next] = collection.current_page + ONE_PAGE
         pages[:last] = collection.total_pages
+        pages[:prev] = nil
+
       end
     end
   end
